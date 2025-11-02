@@ -1,5 +1,9 @@
 package com.appecoviaje.ui
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,10 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.appecoviaje.data.Experience
 import com.appecoviaje.viewmodel.ExperienceViewModel
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +32,27 @@ fun ExperienceScreen(
 
     var comment by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf(0f) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val context = LocalContext.current
+    val file = File(context.cacheDir, "camera_photo.jpg")
+    val cameraImageUri = FileProvider.getUriForFile(context, "com.appecoviaje.fileprovider", file)
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                imageUri = cameraImageUri
+            }
+        }
+    )
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            imageUri = uri
+        }
+    )
 
     Scaffold(
         topBar = {
@@ -95,11 +123,35 @@ fun ExperienceScreen(
                     steps = 4
                 )
                 Spacer(modifier = Modifier.height(8.dp))
+
+                Row {
+                    Button(onClick = { cameraLauncher.launch(cameraImageUri) }) {
+                        Text("Tomar Foto")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = { galleryLauncher.launch("image/*") }) {
+                        Text("Galería")
+                    }
+                }
+
+                imageUri?.let {
+                    Image(
+                        painter = rememberAsyncImagePainter(it),
+                        contentDescription = "Selected image",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Button(
                     onClick = {
-                        experienceViewModel.addExperience(comment, rating)
+                        experienceViewModel.addExperience(comment, rating, imageUri?.toString())
                         comment = ""
                         rating = 0f
+                        imageUri = null
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -131,6 +183,15 @@ fun ExperienceItem(experience: Experience, onDelete: () -> Unit) {
             Text(text = "Usuario #${experience.userId}", style = MaterialTheme.typography.titleMedium)
             Text(text = "Calificación: ${experience.rating}/5")
             Text(text = experience.comment)
+            experience.photoUri?.let {
+                Image(
+                    painter = rememberAsyncImagePainter(it),
+                    contentDescription = "Experience image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
+            }
             Button(onClick = onDelete) {
                 Text("Eliminar")
             }

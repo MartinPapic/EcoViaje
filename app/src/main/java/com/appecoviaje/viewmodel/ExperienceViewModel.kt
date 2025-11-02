@@ -44,7 +44,7 @@ class ExperienceViewModel(
         _selectedTripId.value = tripId
     }
 
-    fun addExperience(comment: String, rating: Float) {
+    fun addExperience(comment: String, rating: Float, photoUri: String?) {
         viewModelScope.launch {
             val userId = userPreferencesRepository.userToken.first()?.toIntOrNull()
             val tripId = selectedTripId.value
@@ -53,7 +53,8 @@ class ExperienceViewModel(
                     tripId = tripId,
                     userId = userId,
                     rating = rating,
-                    comment = comment
+                    comment = comment,
+                    photoUri = photoUri
                 )
                 experienceRepository.insert(newExperience)
             }
