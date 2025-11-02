@@ -8,14 +8,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.appecoviaje.theme.AppEcoViajeTheme
 
 @Composable
-fun LoginScreen(navController: NavController) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun LoginScreen(
+    navController: NavController,
+    loginViewModel: LoginViewModel = viewModel()
+) {
+    val loginUiState by loginViewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -27,19 +30,22 @@ fun LoginScreen(navController: NavController) {
         Text(text = "Login", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
+            value = loginUiState.username,
+            onValueChange = { loginViewModel.onUsernameChange(it) },
             label = { Text("Username") }
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = loginUiState.password,
+            onValueChange = { loginViewModel.onPasswordChange(it) },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("home") }) {
+        Button(onClick = {
+            loginViewModel.onLoginClick()
+            navController.navigate("home")
+        }) {
             Text("Login")
         }
     }
