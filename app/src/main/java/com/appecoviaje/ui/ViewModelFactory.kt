@@ -14,11 +14,11 @@ import com.appecoviaje.viewmodel.RegistrationViewModel
 import com.appecoviaje.data.ExperienceRepository
 import com.appecoviaje.data.ReservationRepository
 import com.appecoviaje.viewmodel.ExperienceViewModel
+import com.appecoviaje.viewmodel.HomeViewModel
 import com.appecoviaje.viewmodel.ReservationViewModel
 import com.appecoviaje.viewmodel.SettingsViewModel
 import com.appecoviaje.viewmodel.TripPlanningViewModel
 import java.lang.IllegalArgumentException
-import com.appecoviaje.viewmodel.HomeViewModel
 
 // Extensión para acceder al DataStore desde Context
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -43,12 +43,12 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
                 TripPlanningViewModel(TripRepository(database.tripDao())) as T
             modelClass.isAssignableFrom(SettingsViewModel::class.java) ->
                 SettingsViewModel(userPreferencesRepository) as T
-            modelClass.isAssignableFrom(HomeViewModel::class.java) ->
-                HomeViewModel(userPreferencesRepository) as T
             modelClass.isAssignableFrom(ExperienceViewModel::class.java) ->
                 ExperienceViewModel(experienceRepository, userPreferencesRepository, TripRepository(database.tripDao())) as T
             modelClass.isAssignableFrom(ReservationViewModel::class.java) ->
                 ReservationViewModel(reservationRepository, userPreferencesRepository, TripRepository(database.tripDao())) as T
+            modelClass.isAssignableFrom(HomeViewModel::class.java) ->
+                HomeViewModel() as T
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }

@@ -7,21 +7,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.appecoviaje.viewmodel.HomeViewModel
 import com.appecoviaje.theme.AppEcoViajeTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import com.appecoviaje.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
+import androidx.compose.ui.platform.LocalContext
+
 @Composable
 fun HomeScreen(
     navController: NavController,
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
 ) {
     val homeUiState by homeViewModel.uiState.collectAsState()
 
@@ -34,10 +36,7 @@ fun HomeScreen(
                 ),
                 actions = {
                     IconButton(onClick = { navController.navigate("settings") }) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings"
-                        )
+                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
                     }
                 }
             )
@@ -56,17 +55,14 @@ fun HomeScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(32.dp))
-
             Button(onClick = { navController.navigate("planning") }) {
                 Text("Planificación de Viajes")
             }
             Spacer(modifier = Modifier.height(16.dp))
-
             Button(onClick = { navController.navigate("reservations") }) {
                 Text("Reservas")
             }
             Spacer(modifier = Modifier.height(16.dp))
-
             Button(onClick = { navController.navigate("experiences") }) {
                 Text("Intercambio de Experiencias")
             }
@@ -78,6 +74,6 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     AppEcoViajeTheme {
-        HomeScreen(navController = rememberNavController())
+        HomeScreen(rememberNavController())
     }
 }
