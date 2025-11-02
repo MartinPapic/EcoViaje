@@ -15,7 +15,9 @@ import com.appecoviaje.viewmodel.ReservationViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationScreen(
     reservationViewModel: ReservationViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
@@ -24,7 +26,9 @@ fun ReservationScreen(
     val trips by reservationViewModel.trips.collectAsState()
     val context = LocalContext.current
     val userPreferencesRepository = UserPreferencesRepository(context.dataStore)
+    val coroutineScope = rememberCoroutineScope()
     var selectedTripId by remember { mutableStateOf<Int?>(null) }
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -35,6 +39,7 @@ fun ReservationScreen(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 selectedTripId?.let { tripId ->
+                    coroutineScope.launch {
                         val userId = userPreferencesRepository.userToken.first()?.toIntOrNull()
                         if (userId != null) {
                             val newReservation = Reservation(
@@ -51,9 +56,14 @@ fun ReservationScreen(
             }
         }
     ) { padding ->
+        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
             if (trips.isNotEmpty()) {
-                selectedTripId = trips.first().id
+                if (selectedTripId == null) {
+                    selectedTripId = trips.first().id
+                }
                 ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded }
                 ) {
                     TextField(
                         value = trips.find { it.id == selectedTripId }?.title ?: "",
@@ -61,13 +71,21 @@ fun ReservationScreen(
                         readOnly = true,
                         label = { Text("Select a trip") },
                         trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
                     )
                     ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
                     ) {
                         trips.forEach { trip ->
                             DropdownMenuItem(
                                 text = { Text(trip.title) },
+                                onClick = {
+                                    selectedTripId = trip.id
+                                    expanded = false
+                                }
                             )
                         }
                     }
