@@ -57,11 +57,11 @@ fun HomeScreen(
                 Text("Planificación de Viajes")
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("reservations") }) {
+            Button(onClick = { /* navController.navigate("bookings") */ }) {
                 Text("Reservas")
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { /* navController.navigate("experiences") */ }) {
+            Button(onClick = { navController.navigate("experiences") }) {
                 Text("Intercambio de Experiencias")
             }
         }

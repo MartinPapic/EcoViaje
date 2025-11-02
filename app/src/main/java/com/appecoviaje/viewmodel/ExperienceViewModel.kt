@@ -2,24 +2,30 @@ package com.appecoviaje.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appecoviaje.data.Reservation
-import com.appecoviaje.data.ReservationRepository
+import com.appecoviaje.data.Experience
+import com.appecoviaje.data.ExperienceRepository
 import com.appecoviaje.data.Trip
 import com.appecoviaje.data.TripRepository
 import com.appecoviaje.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class ReservationViewModel(
-    private val reservationRepository: ReservationRepository,
+class ExperienceViewModel(
+    private val experienceRepository: ExperienceRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val tripRepository: TripRepository
 ) : ViewModel() {
 
-    val reservations: StateFlow<List<Reservation>> = userPreferencesRepository.userToken
-        .flatMapLatest { userToken ->
-            val userId = userToken?.toIntOrNull() ?: -1
-            reservationRepository.getReservationsForUser(userId)
+    private val _selectedTripId = MutableStateFlow<Int?>(null)
+    val selectedTripId: StateFlow<Int?> = _selectedTripId
+
+    val experiences: StateFlow<List<Experience>> = selectedTripId
+        .flatMapLatest { tripId ->
+            if (tripId != null) {
+                experienceRepository.getExperiencesForTrip(tripId)
+            } else {
+                flowOf(emptyList())
+            }
         }
         .stateIn(
             scope = viewModelScope,
@@ -34,15 +40,19 @@ class ReservationViewModel(
             initialValue = emptyList()
         )
 
-    fun addReservation(reservation: Reservation) {
+    fun setSelectedTripId(tripId: Int) {
+        _selectedTripId.value = tripId
+    }
+
+    fun addExperience(experience: Experience) {
         viewModelScope.launch {
-            reservationRepository.insert(reservation)
+            experienceRepository.insert(experience)
         }
     }
 
-    fun deleteReservation(reservationId: Int) {
+    fun deleteExperience(experienceId: Int) {
         viewModelScope.launch {
-            reservationRepository.delete(reservationId)
+            experienceRepository.delete(experienceId)
         }
     }
 }
