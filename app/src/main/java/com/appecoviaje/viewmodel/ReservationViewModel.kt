@@ -16,6 +16,7 @@ class ReservationViewModel(
     private val tripRepository: TripRepository
 ) : ViewModel() {
 
+<<<<<<< HEAD
     // All reservations for the current user
     val reservations: StateFlow<List<Reservation>> = userPreferencesRepository.userToken
         .flatMapLatest { token ->
@@ -37,6 +38,28 @@ class ReservationViewModel(
                 userId = userId,
                 reservationDate = System.currentTimeMillis()
             )
+=======
+    val reservations: StateFlow<List<Reservation>> = userPreferencesRepository.userToken
+        .flatMapLatest { userToken ->
+            val userId = userToken?.toIntOrNull() ?: -1
+            reservationRepository.getReservationsForUser(userId)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    val trips: StateFlow<List<Trip>> = tripRepository.getAllTrips()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    fun addReservation(reservation: Reservation) {
+        viewModelScope.launch {
+>>>>>>> ccb8eb34d0ac4c92d9550c9ef38bc4cf798e4c17
             reservationRepository.insert(reservation)
         }
     }
