@@ -38,14 +38,14 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = loginUiState.username,
-            onValueChange = { loginViewModel.onUsernameChange(it) },
+            onValueChange = { username -> loginViewModel.onUsernameChange(username) },
             label = { Text("Username") },
             isError = loginUiState.errorMessage.isNotEmpty()
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = loginUiState.password,
-            onValueChange = { loginViewModel.onPasswordChange(it) },
+            onValueChange = { password -> loginViewModel.onPasswordChange(password) },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             isError = loginUiState.errorMessage.isNotEmpty()
