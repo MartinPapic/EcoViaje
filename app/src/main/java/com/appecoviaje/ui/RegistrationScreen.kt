@@ -13,17 +13,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.appecoviaje.theme.AppEcoViajeTheme
-import com.appecoviaje.viewmodel.LoginViewModel
-import com.appecoviaje.ui.ViewModelFactory
+import com.appecoviaje.viewmodel.RegistrationViewModel
 
 @Composable
-fun LoginScreen(
+fun RegistrationScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
+    registrationViewModel: RegistrationViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
 ) {
-    val loginUiState by loginViewModel.uiState.collectAsState()
+    val registrationUiState by registrationViewModel.uiState.collectAsState()
 
-    if (loginUiState.loginSuccess) {
+    if (registrationUiState.registrationSuccess) {
         LaunchedEffect(Unit) {
             navController.navigate("home")
         }
@@ -36,41 +35,45 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Login", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Register", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = loginUiState.username,
-            onValueChange = { username -> loginViewModel.onUsernameChange(username) },
+            value = registrationUiState.username,
+            onValueChange = { username -> registrationViewModel.onUsernameChange(username) },
             label = { Text("Username") },
-            isError = loginUiState.errorMessage.isNotEmpty()
+            isError = registrationUiState.errorMessage.isNotEmpty()
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
-            value = loginUiState.password,
-            onValueChange = { password -> loginViewModel.onPasswordChange(password) },
+            value = registrationUiState.password,
+            onValueChange = { password -> registrationViewModel.onPasswordChange(password) },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            isError = loginUiState.errorMessage.isNotEmpty()
+            isError = registrationUiState.errorMessage.isNotEmpty()
         )
-        if (loginUiState.errorMessage.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(
+            value = registrationUiState.confirmPassword,
+            onValueChange = { confirmPassword -> registrationViewModel.onConfirmPasswordChange(confirmPassword) },
+            label = { Text("Confirm Password") },
+            visualTransformation = PasswordVisualTransformation(),
+            isError = registrationUiState.errorMessage.isNotEmpty()
+        )
+        if (registrationUiState.errorMessage.isNotEmpty()) {
             Text(
-                text = loginUiState.errorMessage,
+                text = registrationUiState.errorMessage,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        if (loginUiState.isLoading) {
+        if (registrationUiState.isLoading) {
             CircularProgressIndicator()
         } else {
             Button(onClick = {
-                loginViewModel.onLoginClick()
+                registrationViewModel.onRegistrationClick()
             }) {
-                Text("Login")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            TextButton(onClick = { navController.navigate("registration") }) {
-                Text("Don't have an account? Register")
+                Text("Register")
             }
         }
     }
@@ -78,8 +81,8 @@ fun LoginScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
+fun RegistrationScreenPreview() {
     AppEcoViajeTheme {
-        LoginScreen(rememberNavController())
+        RegistrationScreen(rememberNavController())
     }
 }
