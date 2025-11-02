@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.appecoviaje.data.AppDatabase
 import com.appecoviaje.data.UserPreferencesRepository
 import com.appecoviaje.data.TripRepository
+import com.appecoviaje.data.UserRepository
 import com.appecoviaje.viewmodel.LoginViewModel
 import com.appecoviaje.viewmodel.RegistrationViewModel
 import com.appecoviaje.data.ExperienceRepository
@@ -32,13 +33,14 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
         val database = AppDatabase.getDatabase(context)
         val experienceRepository = ExperienceRepository(database.experienceDao())
         val reservationRepository = ReservationRepository(database.reservationDao())
+        val userRepository = UserRepository(database.userDao())
 
         @Suppress("UNCHECKED_CAST")
         return when {
             modelClass.isAssignableFrom(LoginViewModel::class.java) ->
-                LoginViewModel(userPreferencesRepository) as T
+                LoginViewModel(userPreferencesRepository, userRepository) as T
             modelClass.isAssignableFrom(RegistrationViewModel::class.java) ->
-                RegistrationViewModel(userPreferencesRepository) as T
+                RegistrationViewModel(userPreferencesRepository, userRepository) as T
             modelClass.isAssignableFrom(TripPlanningViewModel::class.java) ->
                 TripPlanningViewModel(TripRepository(database.tripDao())) as T
             modelClass.isAssignableFrom(SettingsViewModel::class.java) ->

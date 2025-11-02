@@ -3,6 +3,7 @@ package com.appecoviaje.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appecoviaje.data.UserPreferencesRepository
+import com.appecoviaje.data.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,8 @@ data class LoginUiState(
 )
 
 class LoginViewModel(
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -44,14 +46,21 @@ class LoginViewModel(
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            // Simulate network request
-            delay(1000)
-            userPreferencesRepository.saveUserToken("dummy_token")
-            _uiState.update { it.copy(isLoading = false, loginSuccess = true) }
+            val user = userRepository.getUser(uiState.value.username)
+            if (user != null && user.passwordHash == hashPassword(uiState.value.password)) {
+                userPreferencesRepository.saveUserToken(user.userId.toString())
+                _uiState.update { it.copy(isLoading = false, loginSuccess = true) }
+            } else {
+                _uiState.update { it.copy(isLoading = false, errorMessage = "Invalid username or password.") }
+            }
         }
     }
 
     private fun isInputValid(): Boolean {
         return uiState.value.username.isNotBlank() && uiState.value.password.isNotBlank()
+    }
+
+    private fun hashPassword(password: String): String {
+        return password.hashCode().toString()
     }
 }

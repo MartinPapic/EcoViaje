@@ -9,11 +9,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Trip::class, Experience::class, Reservation::class], version = 3, exportSchema = false)
+@Database(entities = [Trip::class, Experience::class, Reservation::class, User::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun tripDao(): TripDao
     abstract fun experienceDao(): ExperienceDao
     abstract fun reservationDao(): ReservationDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile

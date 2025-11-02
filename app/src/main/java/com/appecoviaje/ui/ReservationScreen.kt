@@ -3,12 +3,15 @@ package com.appecoviaje.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.appecoviaje.data.Reservation
 import com.appecoviaje.viewmodel.ReservationViewModel
 import java.text.SimpleDateFormat
@@ -17,6 +20,7 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationScreen(
+    navController: NavController,
     reservationViewModel: ReservationViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
 ) {
     val reservations by reservationViewModel.reservations.collectAsState()
@@ -27,7 +31,12 @@ fun ReservationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mis Reservas") }
+                title = { Text("Mis Reservas") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
+                    }
+                }
             )
         },
         floatingActionButton = {

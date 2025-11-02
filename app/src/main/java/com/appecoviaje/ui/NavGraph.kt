@@ -14,7 +14,7 @@ fun NavGraph() {
         composable("home") { HomeScreen(navController) }
         composable("planning") { TripPlanningScreen(navController) }
         composable("settings") { SettingsScreen(navController) }
-        composable("experiences") { ExperienceScreen() }
-        composable("reservations") { ReservationScreen() }
+        composable("experiences") { ExperienceScreen(navController) }
+        composable("reservations") { ReservationScreen(navController) }
     }
 }

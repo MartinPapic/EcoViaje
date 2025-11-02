@@ -2,7 +2,9 @@ package com.appecoviaje.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appecoviaje.data.User
 import com.appecoviaje.data.UserPreferencesRepository
+import com.appecoviaje.data.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +22,8 @@ data class RegistrationUiState(
 )
 
 class RegistrationViewModel(
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
@@ -44,9 +47,13 @@ class RegistrationViewModel(
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            // Simulate network request
-            delay(1000)
-            userPreferencesRepository.saveUserToken("dummy_token")
+            val hashedPassword = hashPassword(uiState.value.password)
+            val newUser = User(username = uiState.value.username, passwordHash = hashedPassword)
+            userRepository.createUser(newUser)
+            val user = userRepository.getUser(uiState.value.username)
+            if (user != null) {
+                userPreferencesRepository.saveUserToken(user.userId.toString())
+            }
             _uiState.update { it.copy(isLoading = false, registrationSuccess = true) }
         }
     }
@@ -62,5 +69,8 @@ class RegistrationViewModel(
             return false
         }
         return true
+    }
+    private fun hashPassword(password: String): String {
+        return password.hashCode().toString()
     }
 }
