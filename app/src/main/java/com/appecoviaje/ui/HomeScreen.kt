@@ -7,8 +7,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.icons.Icons
+import androidx.compose.material3.icons.filled.Settings
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -16,9 +16,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.appecoviaje.theme.AppEcoViajeTheme
 import com.appecoviaje.viewmodel.HomeViewModel
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
-import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
 fun HomeScreen(
