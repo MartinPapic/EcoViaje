@@ -3,8 +3,6 @@ package com.appecoviaje.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -33,28 +31,35 @@ fun ExperienceScreen(
             TopAppBar(
                 title = { Text("Intercambio de Experiencias") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
+                    TextButton(onClick = { navController.popBackStack() }) {
+                        Text("Volver", color = MaterialTheme.colorScheme.primary)
                     }
                 }
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .padding(16.dp)
+        ) {
             if (trips.isNotEmpty()) {
                 var expanded by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }
                 ) {
-                    val selectedTripTitle = trips.find { it.id == selectedTripId }?.title ?: "Selecciona un viaje"
+                    val selectedTripTitle =
+                        trips.find { it.id == selectedTripId }?.title ?: "Selecciona un viaje"
                     TextField(
                         value = selectedTripTitle,
                         onValueChange = {},
                         readOnly = true,
                         label = { Text("Viaje") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
@@ -82,16 +87,17 @@ fun ExperienceScreen(
                     label = { Text("Comentario") },
                     modifier = Modifier.fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Slider(
                     value = rating,
                     onValueChange = { rating = it },
                     valueRange = 0f..5f,
                     steps = 4
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     onClick = {
                         experienceViewModel.addExperience(comment, rating)
-                        // Reset form
                         comment = ""
                         rating = 0f
                     },

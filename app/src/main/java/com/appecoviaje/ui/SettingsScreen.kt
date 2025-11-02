@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,8 +29,8 @@ fun SettingsScreen(
             TopAppBar(
                 title = { Text("Configuración") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
+                    TextButton(onClick = { navController.popBackStack() }) {
+                        Text("Volver")
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -49,7 +47,7 @@ fun SettingsScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Dark Mode")
+            Text("Modo oscuro")
             Switch(
                 checked = isDarkMode,
                 onCheckedChange = { settingsViewModel.setDarkMode(it) }

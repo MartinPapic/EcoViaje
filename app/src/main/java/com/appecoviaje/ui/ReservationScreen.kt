@@ -3,8 +3,6 @@ package com.appecoviaje.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -33,19 +31,22 @@ fun ReservationScreen(
             TopAppBar(
                 title = { Text("Mis Reservas") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
+                    TextButton(onClick = { navController.popBackStack() }) {
+                        Text("Volver")
                     }
                 }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                selectedTripId?.let { tripId ->
-                    reservationViewModel.addReservation(tripId)
-                }
-            }) {
-                Text("+")
+            TextButton(
+                onClick = {
+                    selectedTripId?.let { tripId ->
+                        reservationViewModel.addReservation(tripId)
+                    }
+                },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text("Agregar reserva")
             }
         }
     ) { padding ->
@@ -64,11 +65,13 @@ fun ReservationScreen(
                         value = trips.find { it.id == selectedTripId }?.title ?: "",
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Select a trip") },
+                        label = { Text("Selecciona un viaje") },
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
-                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
@@ -86,6 +89,8 @@ fun ReservationScreen(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn {
                 items(reservations) { reservation ->
@@ -116,7 +121,12 @@ fun ReservationItem(reservation: Reservation, onDelete: () -> Unit) {
                 Text(text = "Viaje #${reservation.tripId}")
                 Text(text = "Fecha: ${formatDate(reservation.reservationDate)}")
             }
-            Button(onClick = onDelete) {
+            TextButton(
+                onClick = onDelete,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
                 Text("Eliminar")
             }
         }
