@@ -11,6 +11,8 @@ import com.appecoviaje.data.UserPreferencesRepository
 import com.appecoviaje.data.TripRepository
 import com.appecoviaje.viewmodel.LoginViewModel
 import com.appecoviaje.viewmodel.RegistrationViewModel
+import com.appecoviaje.data.ReservationRepository
+import com.appecoviaje.viewmodel.ReservationViewModel
 import com.appecoviaje.viewmodel.SettingsViewModel
 import com.appecoviaje.viewmodel.TripPlanningViewModel
 import java.lang.IllegalArgumentException
@@ -25,6 +27,7 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val userPreferencesRepository = UserPreferencesRepository(context.dataStore)
         val database = AppDatabase.getDatabase(context)
+        val reservationRepository = ReservationRepository(database.reservationDao())
 
         @Suppress("UNCHECKED_CAST")
         return when {
@@ -36,6 +39,8 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
                 TripPlanningViewModel(TripRepository(database.tripDao())) as T
             modelClass.isAssignableFrom(SettingsViewModel::class.java) ->
                 SettingsViewModel(userPreferencesRepository) as T
+            modelClass.isAssignableFrom(ReservationViewModel::class.java) ->
+                ReservationViewModel(reservationRepository, userPreferencesRepository, TripRepository(database.tripDao())) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
