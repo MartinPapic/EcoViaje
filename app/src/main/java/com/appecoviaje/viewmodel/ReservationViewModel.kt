@@ -16,29 +16,6 @@ class ReservationViewModel(
     private val tripRepository: TripRepository
 ) : ViewModel() {
 
-<<<<<<< HEAD
-    // All reservations for the current user
-    val reservations: StateFlow<List<Reservation>> = userPreferencesRepository.userToken
-        .flatMapLatest { token ->
-            val userId = token?.toIntOrNull() ?: -1
-            reservationRepository.getReservationsForUser(userId)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    // All trips
-    val trips: StateFlow<List<Trip>> = tripRepository.getAllTrips()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    // Add a reservation for a given trip (ViewModel handles user ID and timestamp)
-    fun addReservationForTrip(tripId: Int) {
-        viewModelScope.launch {
-            val userId = userPreferencesRepository.userToken.firstOrNull()?.toIntOrNull() ?: return@launch
-            val reservation = Reservation(
-                tripId = tripId,
-                userId = userId,
-                reservationDate = System.currentTimeMillis()
-            )
-=======
     val reservations: StateFlow<List<Reservation>> = userPreferencesRepository.userToken
         .flatMapLatest { userToken ->
             val userId = userToken?.toIntOrNull() ?: -1
@@ -57,10 +34,17 @@ class ReservationViewModel(
             initialValue = emptyList()
         )
 
-    fun addReservation(reservation: Reservation) {
+    fun addReservation(tripId: Int) {
         viewModelScope.launch {
->>>>>>> ccb8eb34d0ac4c92d9550c9ef38bc4cf798e4c17
-            reservationRepository.insert(reservation)
+            val userId = userPreferencesRepository.userToken.first()?.toIntOrNull()
+            if (userId != null) {
+                val newReservation = Reservation(
+                    tripId = tripId,
+                    userId = userId,
+                    reservationDate = System.currentTimeMillis()
+                )
+                reservationRepository.insert(newReservation)
+            }
         }
     }
 

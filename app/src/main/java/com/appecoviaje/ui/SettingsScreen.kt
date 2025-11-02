@@ -34,37 +34,19 @@ fun SettingsScreen(
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Dark Mode")
-                Switch(
-                    checked = isDarkMode,
-                    onCheckedChange = { settingsViewModel.setDarkMode(it) }
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Notifications")
-                Switch(
-                    checked = false,
-                    onCheckedChange = { /* TODO */ }
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Language")
-                Text("Español")
-            }
+        Row(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Dark Mode")
+            Switch(
+                checked = isDarkMode,
+                onCheckedChange = { settingsViewModel.setDarkMode(it) }
+            )
         }
     }
 }

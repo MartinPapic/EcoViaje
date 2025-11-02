@@ -10,10 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.appecoviaje.data.Experience
-import com.appecoviaje.data.UserPreferencesRepository
 import com.appecoviaje.viewmodel.ExperienceViewModel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,9 +20,6 @@ fun ExperienceScreen(
     val experiences by experienceViewModel.experiences.collectAsState()
     val trips by experienceViewModel.trips.collectAsState()
     val selectedTripId by experienceViewModel.selectedTripId.collectAsState()
-    val context = LocalContext.current
-    val userPreferencesRepository = UserPreferencesRepository(context.dataStore)
-    val coroutineScope = rememberCoroutineScope()
 
     var comment by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf(0f) }
@@ -85,21 +79,10 @@ fun ExperienceScreen(
                 )
                 Button(
                     onClick = {
-                        coroutineScope.launch {
-                            val userId = userPreferencesRepository.userToken.first()?.toIntOrNull()
-                            if (userId != null && selectedTripId != null) {
-                                val newExperience = Experience(
-                                    tripId = selectedTripId!!,
-                                    userId = userId,
-                                    rating = rating,
-                                    comment = comment
-                                )
-                                experienceViewModel.addExperience(newExperience)
-                                // Reset form
-                                comment = ""
-                                rating = 0f
-                            }
-                        }
+                        experienceViewModel.addExperience(comment, rating)
+                        // Reset form
+                        comment = ""
+                        rating = 0f
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
