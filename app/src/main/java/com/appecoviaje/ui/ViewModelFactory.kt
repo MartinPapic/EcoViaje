@@ -48,7 +48,7 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
             modelClass.isAssignableFrom(ReservationViewModel::class.java) ->
                 ReservationViewModel(reservationRepository, userPreferencesRepository, TripRepository(database.tripDao())) as T
             modelClass.isAssignableFrom(HomeViewModel::class.java) ->
-                HomeViewModel() as T
+                HomeViewModel(userPreferencesRepository) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
