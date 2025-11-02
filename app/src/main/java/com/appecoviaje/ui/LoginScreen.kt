@@ -13,6 +13,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.appecoviaje.theme.AppEcoViajeTheme
+import com.appecoviaje.viewmodel.LoginViewModel
+import com.appecoviaje.ui.ViewModelFactory
 
 @Composable
 fun LoginScreen(

@@ -1,8 +1,9 @@
-package com.appecoviaje.ui
+package com.appecoviaje.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appecoviaje.data.UserPreferencesRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,11 +11,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class LoginUiState(
-    val username = "",
-    val password = "",
-    val isLoading = false,
-    val errorMessage = "",
-    val loginSuccess = false
+    val username: String = "",
+    val password: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String = "",
+    val loginSuccess: Boolean = false
 )
 
 class LoginViewModel(
@@ -44,7 +45,7 @@ class LoginViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             // Simulate network request
-            kotlinx.coroutines.delay(1000)
+            delay(1000)
             userPreferencesRepository.saveUserToken("dummy_token")
             _uiState.update { it.copy(isLoading = false, loginSuccess = true) }
         }

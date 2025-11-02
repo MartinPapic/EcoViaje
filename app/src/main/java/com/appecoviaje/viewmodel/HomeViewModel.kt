@@ -1,4 +1,4 @@
-package com.appecoviaje.ui
+package com.appecoviaje.viewmodel
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
