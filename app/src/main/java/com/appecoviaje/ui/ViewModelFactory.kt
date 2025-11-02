@@ -18,7 +18,7 @@ import com.appecoviaje.viewmodel.TripPlanningViewModel
 import java.lang.IllegalArgumentException
 
 // Extensión para acceder al DataStore desde Context
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
     name = "user_preferences"
 )
 

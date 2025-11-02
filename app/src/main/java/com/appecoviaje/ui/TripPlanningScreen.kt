@@ -23,9 +23,9 @@ import androidx.navigation.compose.rememberNavController
 import com.appecoviaje.theme.AppEcoViajeTheme
 import com.appecoviaje.data.Trip
 import com.appecoviaje.viewmodel.TripPlanningViewModel
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
-import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun TripPlanningScreen(
