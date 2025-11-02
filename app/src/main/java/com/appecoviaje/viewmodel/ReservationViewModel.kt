@@ -6,77 +6,80 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.appecoviaje.data.Reservation
-import com.appecoviaje.data.UserPreferencesRepository
 import com.appecoviaje.viewmodel.ReservationViewModel
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlinx.coroutines.flow.first
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationScreen(
     reservationViewModel: ReservationViewModel = viewModel(factory = ViewModelFactory(LocalContext.current))
 ) {
     val reservations by reservationViewModel.reservations.collectAsState()
     val trips by reservationViewModel.trips.collectAsState()
-    val context = LocalContext.current
-    val userPreferencesRepository = UserPreferencesRepository(context.dataStore)
     var selectedTripId by remember { mutableStateOf<Int?>(null) }
+    var dropdownExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Mis Reservas") }
-            )
+            TopAppBar(title = { Text("Mis Reservas") })
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                selectedTripId?.let { tripId ->
-                        val userId = userPreferencesRepository.userToken.first()?.toIntOrNull()
-                        if (userId != null) {
-                            val newReservation = Reservation(
-                                tripId = tripId,
-                                userId = userId,
-                                reservationDate = System.currentTimeMillis()
-                            )
-                            reservationViewModel.addReservation(newReservation)
-                        }
+            FloatingActionButton(
+                onClick = {
+                    selectedTripId?.let { tripId ->
+                        reservationViewModel.addReservation(tripId)
                     }
                 }
-            }) {
+            ) {
                 Text("+")
             }
         }
     ) { padding ->
+        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
+
+            // Trip selection dropdown
             if (trips.isNotEmpty()) {
-                selectedTripId = trips.first().id
+                selectedTripId = selectedTripId ?: trips.first().id
                 ExposedDropdownMenuBox(
+                    expanded = dropdownExpanded,
+                    onExpandedChange = { dropdownExpanded = !dropdownExpanded }
                 ) {
                     TextField(
                         value = trips.find { it.id == selectedTripId }?.title ?: "",
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Select a trip") },
-                        trailingIcon = {
-                        },
+                        label = { Text("Selecciona un viaje") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded) },
+                        modifier = Modifier.menuAnchor()
                     )
                     ExposedDropdownMenu(
+                        expanded = dropdownExpanded,
+                        onDismissRequest = { dropdownExpanded = false }
                     ) {
                         trips.forEach { trip ->
                             DropdownMenuItem(
                                 text = { Text(trip.title) },
+                                onClick = {
+                                    selectedTripId = trip.id
+                                    dropdownExpanded = false
+                                }
                             )
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            LazyColumn {
+            // List of reservations
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
                 items(reservations) { reservation ->
-                    ReservationItem(reservation = reservation) {
+                    ReservationItem(reservation) {
                         reservationViewModel.deleteReservation(reservation.id)
                     }
                 }
@@ -90,12 +93,13 @@ fun ReservationItem(reservation: Reservation, onDelete: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
@@ -111,6 +115,6 @@ fun ReservationItem(reservation: Reservation, onDelete: () -> Unit) {
 }
 
 private fun formatDate(timestamp: Long): String {
-    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return sdf.format(Date(timestamp))
+    val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+    return sdf.format(java.util.Date(timestamp))
 }
