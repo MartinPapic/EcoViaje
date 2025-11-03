@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.appecoviaje.data.Experience
 import com.appecoviaje.viewmodel.ExperienceViewModel
 import java.io.File
@@ -135,8 +135,8 @@ fun ExperienceScreen(
                 }
 
                 imageUri?.let {
-                    Image(
-                        painter = rememberAsyncImagePainter(it),
+                    AsyncImage(
+                        model = it,
                         contentDescription = "Selected image",
                         modifier = Modifier
                             .fillMaxWidth()
@@ -180,18 +180,23 @@ fun ExperienceItem(experience: Experience, onDelete: () -> Unit) {
             .padding(vertical = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Usuario #${experience.userId}", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "Usuario #${experience.userId}",
+                style = MaterialTheme.typography.titleMedium
+            )
             Text(text = "Calificación: ${experience.rating}/5")
             Text(text = experience.comment)
+
             experience.photoUri?.let {
-                Image(
-                    painter = rememberAsyncImagePainter(it),
+                AsyncImage(
+                    model = it,
                     contentDescription = "Experience image",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
                 )
             }
+
             Button(onClick = onDelete) {
                 Text("Eliminar")
             }
