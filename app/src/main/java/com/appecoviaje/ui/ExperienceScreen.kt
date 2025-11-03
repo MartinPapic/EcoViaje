@@ -10,13 +10,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.appecoviaje.data.Experience
 import com.appecoviaje.viewmodel.ExperienceViewModel
 import java.io.File
@@ -136,10 +135,9 @@ fun ExperienceScreen(
                 }
 
                 imageUri?.let {
-                    AsyncImage(
-                        model = it,
+                    Image(
+                        painter = rememberAsyncImagePainter(it),
                         contentDescription = "Selected image",
-                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -182,23 +180,18 @@ fun ExperienceItem(experience: Experience, onDelete: () -> Unit) {
             .padding(vertical = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Usuario #${experience.userId}",
-                style = MaterialTheme.typography.titleMedium
-            )
+            Text(text = "Usuario #${experience.userId}", style = MaterialTheme.typography.titleMedium)
             Text(text = "Calificación: ${experience.rating}/5")
             Text(text = experience.comment)
-
             experience.photoUri?.let {
-                AsyncImage(
-                    model = it,
+                Image(
+                    painter = rememberAsyncImagePainter(it),
                     contentDescription = "Experience image",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
                 )
             }
-
             Button(onClick = onDelete) {
                 Text("Eliminar")
             }

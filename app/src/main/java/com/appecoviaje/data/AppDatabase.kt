@@ -28,10 +28,11 @@ abstract class AppDatabase : RoomDatabase() {
                             super.onCreate(db)
                             Instance?.let { database ->
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    database.tripDao().insert(Trip(title = "Senderismo en la Sierra", description = "Una aventura de senderismo para todos los niveles.", location = "Sierra Nevada"))
-                                    database.tripDao().insert(Trip(title = "Tour de Observación de Aves", description = "Descubre la avifauna local en su hábitat natural.", location = "Parque Natural Doñana"))
-                                    database.tripDao().insert(Trip(title = "Ruta Gastronómica Sostenible", description = "Saborea productos locales y ecológicos.", location = "La Alpujarra"))
-                                    database.tripDao().insert(Trip(title = "Ciclismo por la Vía Verde", description = "Un recorrido en bicicleta por antiguas vías de tren.", location = "Vía Verde de la Sierra"))
+                                    database.tripDao().insert(Trip(title = "Torres del Paine", description = "El circuito de trekking más famoso de Chile y la Patagonia.", location = "Parque Nacional Torres del Paine"))
+                                    database.tripDao().insert(Trip(title = "San Pedro de Atacama", description = "Un oasis en medio del desierto más árido del mundo.", location = "San Pedro de Atacama"))
+                                    database.tripDao().insert(Trip(title = "Isla de Pascua", description = "La isla más remota del planeta, famosa por sus moáis.", location = "Isla de Pascua"))
+                                    database.tripDao().insert(Trip(title = "Carretera Austral", description = "Una de las rutas más escénicas del mundo para recorrer en auto.", location = "Patagonia Chilena"))
+                                    database.tripDao().insert(Trip(title = "Valle del Elqui", description = "El mejor lugar de Chile para la observación de estrellas.", location = "Valle del Elqui"))
                                 }
                             }
                         }
