@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -138,6 +139,7 @@ fun ExperienceScreen(
                     AsyncImage(
                         model = it,
                         contentDescription = "Selected image",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
